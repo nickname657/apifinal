@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/showp', [ProductsController::class, 'showProducts']);
+Route::get('/showp', [ProductsController::class, 'showProducts'])->name('showp');
 Route::post('/filterprod', [ProductsController::class, 'productsCategory']);
 
 Route::post('/addprod', [CartsController::class, 'addToCart'])->name('cart.addprod');
