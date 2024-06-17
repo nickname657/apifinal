@@ -18,6 +18,16 @@ class UserSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
+            'type' => 'empleado',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('users')->insert([
+            'name' => 'cliente',
+            'email' => 'cliente@example.com',
+            'password' => Hash::make('password'),
+            'type' => 'cliente',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

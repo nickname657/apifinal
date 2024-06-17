@@ -8,6 +8,7 @@ use App\Models\Orders;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrdersController extends Controller
 {
@@ -35,6 +36,7 @@ class OrdersController extends Controller
             $orderItem->order_id = session('contador');
             $orderItem->product_id = $item;
             $orderItem->quantity = $value;
+
             $orderItem->save();
         }
 
@@ -44,5 +46,18 @@ class OrdersController extends Controller
             'message' => 'Order created successfully',
             'order' => $order,
         ]);
+    }
+
+
+    public function filterorders(Request $request)
+    {
+        $iduser = $request->userid;
+        $orders = DB::table('orders')
+            ->select(['id', 'total_amount','status'])
+            ->where('user_id', $iduser);
+
+        return response()->json($orders);
+
+
     }
 }

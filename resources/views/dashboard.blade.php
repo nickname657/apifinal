@@ -144,6 +144,7 @@
                         let stat = "pagado";
 
 
+
                         fetch(`{{ route('cart.storeorder') }}`, {
                                 method: 'POST',
                                 headers: {
@@ -165,7 +166,6 @@
                         a.innerHTML = '';
 
                         let sel = document.createElement('select');
-
 
                         data.forEach(element => {
                             let op = document.createElement('option');
