@@ -40,7 +40,7 @@
                     <div id="data">
 
                     </div>
-                    <input type="number" id="quantity">
+                    <input type="number" id="quantity" min="0">
                     <button type="button" onclick="additem()">enviar</button>
                 </div>
 
@@ -97,11 +97,17 @@
                                 if (!response.ok) {
                                     throw new Error('Error en la solicitud');
                                 }
-                                return response;
+                                return response.json();
                             })
                             .then(data => {
-                                console.log('Tipo de dato:', typeof data);
-                                return data;
+
+                                console.log('Total a pagar:', data);
+                                let a = document.getElementById('totalmonto');
+                                if (a) {
+                                    console.log('dentroo');
+                                    a.value = data;
+                                    
+                                }
                             })
                             .catch(error => {
                                 console.error('Error al calcular el monto:', error);
@@ -113,6 +119,8 @@
 
                         let productId = document.getElementById('data').querySelector('select').value;
                         let quantity = document.getElementById('quantity').value;
+                        let name = document.getElementById('data').querySelector('select').options[document.getElementById('data').querySelector('select').selectedIndex].text;
+                        let price = document.getElementById('data').querySelector('select').options[document.getElementById('data').querySelector('select').selectedIndex].name;
 
                         fetch(`{{ route('cart.addprod') }}`, {
                                 method: 'POST',
@@ -121,7 +129,9 @@
                                 },
                                 body: JSON.stringify({
                                     productId: productId,
-                                    quantity: quantity
+                                    quantity: quantity,
+                                    price:price,
+                                    name:name 
                                 })
                             }).then(response => response)
                             .then(data => console.log(data));
@@ -130,9 +140,9 @@
 
                     function pay() {
 
-                        let totalamount = document.getElementById('total').value;
+                        let totalamount = document.getElementById('totalmonto').value;
                         let stat = "pagado";
-                        
+
 
                         fetch(`{{ route('cart.storeorder') }}`, {
                                 method: 'POST',
@@ -160,6 +170,7 @@
                         data.forEach(element => {
                             let op = document.createElement('option');
                             op.value = element.id;
+                            op.name = element.price;
                             let text = document.createTextNode(element.name);
                             op.appendChild(text);
                             sel.appendChild(op);
@@ -178,15 +189,16 @@
                             }
                             const data = await response.json();
                             console.log("Datos del carrito:", typeof data, data);
-                            const datax = Object.entries(data).map(([name, price]) => ({
+                            const datax = Object.entries(data).map(([idp, {quantity,name,price}]) => ({
+                                idp,
+                                quantity,
                                 name,
                                 price
                             }));
-                            let secondata = totalmount();
 
                             console.log("Datos del carrito:", typeof datax, datax);
                             displayItems(datax);
-
+                            totalmount();
                         } catch (error) {
                             console.error('Error en show cart:', error);
                         }
@@ -198,6 +210,8 @@
 
                         let tbody = document.getElementById('tbody');
 
+                        let tm = 0;
+
                         tbody.innerHTML = '';
 
 
@@ -207,11 +221,13 @@
                         let tday1text = document.createTextNode('Total a pagar');
                         let tdpay2 = document.createElement('td');
                         tdpay2.className = 'w-1/3 py-3 px-4';
-                        td2span = document.createElement('span');
+                        let td2span = document.createElement('input');
                         td2span.className = 'text-green-500';
-                        td2span.id = 'total';
-                        td2span.value = '12345';
-                        let total = document.createTextNode('12345');
+                        td2span.id = 'totalmonto';
+                        td2span.value =
+                            tm;
+                        td2span.readOnly = true;
+                        let total = document.createTextNode(tm);
                         td2span.appendChild(total);
                         let tdpay3 = document.createElement('td');
                         tdpay3.className = 'w-1/3 py-3 px-4';
@@ -219,7 +235,8 @@
                         tdpay4.className = 'w-1/3 py-3 px-4';
                         let td5button = document.createElement('button');
                         let td5buttontext = document.createTextNode('Pagar');
-                        td5button.className = 'bg-green-100 text-white py-1 px-3 rounded';
+                        td5button.className =
+                            'bg-green-100 text-white py-1 px-3 rounded';
                         td5button.onclick = function() {
                             pay();
                         };
@@ -248,20 +265,20 @@
                             let buttonupdtext = document.createTextNode('Actualizar');
                             buttonupd.className = 'bg-green-100 text-white py-1 px-3 rounded';
                             buttonupd.onclick = function() {
-                                updateQuantity(element.name, input.value);
+                                updateQuantity(element.idp, input.value);
                             };
 
                             let buttondel = document.createElement('button');
                             let buttondeltext = document.createTextNode('Eliminar');
                             buttondel.className = 'bg-red-500 text-white py-1 px-3 rounded';
                             buttondel.onclick = function() {
-                                deleteProduct(element.name);
+                                deleteProduct(element.idp);
                             };
 
 
 
                             input.type = 'number';
-                            input.value = element.quantity;
+                            input.value = element.cantp;
                             input.min = 1;
                             input.className = 'w-full py-1 px-2 border border-gray-300 rounded';
                             td2.appendChild(input);
@@ -292,11 +309,14 @@
                         tbody.appendChild(trpay);
                         trpay.appendChild(tdpay1);
                         tdpay1.appendChild(tday1text);
-                        trpay.appendChild(tdpay2);
+                        trpay.appendChild(
+                            tdpay2);
                         tdpay2.appendChild(td2span);
+
                         trpay.appendChild(tdpay3);
                         trpay.appendChild(tdpay4);
-                        tdpay4.appendChild(td5button);
+                        tdpay4
+                            .appendChild(td5button);
                         td5button.appendChild(td5buttontext);
 
 
@@ -353,6 +373,7 @@
                         fetch(`{{ route('cart.deleteitem') }}`, {
                                 method: 'POST',
                                 headers: {
+                                    'Content-Type': 'application/json',
                                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                                 },
                                 body: JSON.stringify({
@@ -366,7 +387,7 @@
                             })
                             .then(data => {
                                 if (data) {
-                                    return JSON.parse(data);
+                                    return data;
                                 }
                             })
                             .then(parsedData => console.log(parsedData))

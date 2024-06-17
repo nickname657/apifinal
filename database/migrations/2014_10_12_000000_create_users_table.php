@@ -63,7 +63,7 @@ return new class extends Migration
         });
 
 
-        Schema::create('order_items', function (Blueprint $table) {
+        Schema::create('orderitems', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
@@ -95,7 +95,7 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('sessions');
 
-        Schema::dropIfExists('order_items');
+        Schema::dropIfExists('orderitems');
         Schema::dropIfExists('orders');
         Schema::dropIfExists('categories');
         Schema::dropIfExists('products');

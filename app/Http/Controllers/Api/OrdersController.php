@@ -29,11 +29,12 @@ class OrdersController extends Controller
         $order->save();
 
         $cartItems = session('cart');
-        foreach ($cartItems as $item) {
+        foreach ($cartItems as $item => $value) {
+
             $orderItem = new Orderitems();
             $orderItem->order_id = session('contador');
-            $orderItem->product_id = $item[productId];
-            $orderItem->quantity = $itm[quantity];
+            $orderItem->product_id = $item;
+            $orderItem->quantity = $value;
             $orderItem->save();
         }
 

@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Productcategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class ProductsController extends Controller
 {
@@ -40,4 +41,6 @@ class ProductsController extends Controller
     return response()->json($prod);
 
     }
+
+
 }
