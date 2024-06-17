@@ -46,10 +46,9 @@ class ProductsController extends Controller
 
 
         $product = new Product();
-        $product->id = $request->idp;
-        $product->name  = $request->totalamount;
-        $product->description = $request->status;
-        $product->price = $request->status;
+        $product->name  = $request->name;
+        $product->description = $request->description;
+        $product->price = $request->cost;
         $product-> save();
 
 
@@ -62,17 +61,19 @@ class ProductsController extends Controller
 
 
     public function updateproduct(Request $request){
-            $productId = $request->input('productId'); 
+
+            $productId = $request->id; 
         
-            $name = $request->input('name');
-            $description = $request->input('description');
-            $price = $request->input('price');
+            $name = $request->name;
+            $description = $request->description;
+            $price = $request->cost;
 
 
             $options = [ $name, $description, $price];
             $atributes =['name','description','price'];
-
-            $product = DB::update('update products set ? = ? where id = ?', [$atributes,$options,$productId]);
+            $product = DB::table('products')
+                ->where('id', $productId)
+                ->update(array_combine($atributes, $options));
 
         
         

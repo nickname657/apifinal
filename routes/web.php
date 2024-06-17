@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/employee', function () {
     return view('employees');
-});
+})->name('employee');
 // ->middleware(['verifiedemployee', 'verify']);
 
 require __DIR__.'/auth.php';

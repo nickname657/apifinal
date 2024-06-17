@@ -273,6 +273,7 @@
                             buttondel.className = 'bg-red-500 text-white py-1 px-3 rounded';
                             buttondel.onclick = function() {
                                 deleteProduct(element.idp);
+                                showcart();
                             };
 
 

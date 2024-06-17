@@ -30,3 +30,6 @@ Route::post('/updateitem', [CartsController::class, 'updateitem'])->name('cart.u
 Route::post('/deleteitem', [CartsController::class, 'deleteitem'])->name('cart.deleteitem');
 Route::get('/calculateTotalAmount', [CartsController::class, 'calculateTotalAmount'])->name('cart.calculateTotalAmount');
 Route::post('/store', [OrdersController::class, 'store'])->name('cart.storeorder');
+
+Route::post('/saveproduct', [ProductsController::class, 'addprod'])->name('product.newproduct');
+Route::post('/updateProduct', [ProductsController::class, 'updateproduct'])->name('product.updateproduct');

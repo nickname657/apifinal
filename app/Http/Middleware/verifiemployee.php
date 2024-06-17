@@ -18,6 +18,8 @@ class verifiemployee extends Middleware
   public function handle(Request $request, Closure $next): Response
   {
 
+
+    
     $user = DB::table('users')
       ->where('id', $request->iduser)
       ->pluck(

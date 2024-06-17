@@ -23,7 +23,7 @@
                     <label for="">Precio</label>
                     <input id="cost" type="number"><br>
 
-                    <button type="button" onclick="">añadir</button>
+                    <button type="button" onclick="newproduct()">añadir</button>
 
 
                 </div>
@@ -38,10 +38,12 @@
 
                     </div>
                     <label for="">Nuevo nombre</label><br>
+                    <input id="newnameProduct" type="text"><br>
                     <label for="">Descripcion</label><br>
+                    <input id="newdescriptionProduct" type="text"><br>
                     <label for="">Precio</label><br>
-                    <input type="number" id="quantity"><br>
-                    <button type="button" onclick="additem()">Actualizar</button>
+                    <input id="newpriceProduct" type="text"><br>
+                    <button type="button" onclick="updatedataProduct()">Actualizar</button>
 
 
 
@@ -55,7 +57,7 @@
                     <div id="productos">
 
                     </div>
-                    <button type="button" onclick="additem()">Eliminar producto</button>
+                    <button type="button" onclick="updatedataProduct()">Eliminar producto</button>
 
 
 
@@ -77,6 +79,72 @@
 
 
                 <script>
+                    function newproduct() {
+                        let name = document.getElementById('nameproduct').value;
+                        let descript = document.getElementById('descript').value;
+                        let cost = document.getElementById('cost').value;
+
+                        let data = {
+                            name: name,
+                            description: descript,
+                            cost: cost
+                        }
+
+                        console.log(data);
+
+                        fetch(`{{ route('product.newproduct') }}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify(data)
+                        }).then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error al enviar los datos al servidor');
+                            }
+                            return response.json();
+                        }).then(data => {
+                            console.log('Respuesta del servidor:', data);
+                        }).catch(error => {
+                            console.error('Error en create cart:', error);
+                        });
+                    }
+
+                    function updatedataProduct() {
+                        let id = document.getElementById('selectproduct').value;
+                        let name = document.getElementById('newnameProduct').value;
+                        let descript = document.getElementById('newdescriptionProduct').value;
+                        let cost = document.getElementById('newpriceProduct').value;
+
+                        let data = {
+                            id: id,
+                            name: name,
+                            description: descript,
+                            cost: cost
+                        }
+
+                        console.log(data);
+
+                        fetch(`{{ route('product.updateproduct') }}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify(data)
+                        }).then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error al enviar los datos al servidor');
+                            }
+                            return response.json();
+                        }).then(data => {
+                            console.log('Respuesta del servidor:', data);
+                        }).catch(error => {
+                            console.error('Error en create cart:', error);
+                        });
+                    }
+
                     function displayData(data) {
 
 
@@ -85,19 +153,13 @@
                         a.innerHTML = '';
 
                         let sel = document.createElement('select');
+                        sel.id = 'selectproduct';
 
 
-                        const datax = Object.entries(data).map(([id, name, price, description]) => ({
-                            id,
-                            name,
-                            price,
-                            description
-                        }));
 
-                        datax.forEach(element => {
+                        data.forEach(element => {
                             let op = document.createElement('option');
                             op.value = element.id;
-                            console.log(element);
                             let text = document.createTextNode(element.name);
                             op.appendChild(text);
                             sel.appendChild(op);
@@ -107,27 +169,19 @@
                     }
 
 
-                    function showproducts() {
-                        fetch(`{{ route('showp') }}`, {
-                                method: 'get',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                }
-                            }).then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Error en la solicitud');
-                                }
-                                return response;
-                            })
-                            .then(data => {
-                                console.log('Tipo de dato:', typeof data);
-                                console.log("Datos del carrito:", data);
-                                displayData(data);
-                                return data;
-                            })
-                            .catch(error => {
-                                console.error('Error al obtener productos:', error);
-                            });
+                    async function showproducts() {
+                        try {
+                            const response = await fetch(`{{ route('showp') }}`);
+                            if (!response.ok) {
+                                throw new Error('Error al obtener los datos del servidor');
+                            }
+                            const data = await response.json();
+                            console.log("Respuesta de  pro:", data);
+                            displayData(data);
+
+                        } catch (error) {
+                            console.error('Error en create cart:', error);
+                        }
                     }
                 </script>
 
